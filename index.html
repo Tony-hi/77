@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>谁是卧底 - 在线发牌助手</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 首页（游戏设置） -->
+    <div id="setup-page" class="page active">
+        <div class="container">
+            <h1 class="title">🎭 谁是卧底</h1>
+            <p class="subtitle">在线发牌助手</p>
+            
+            <!-- 人数选择器 -->
+            <div class="section">
+                <h2>玩家人数</h2>
+                <div class="player-count">
+                    <input type="range" id="player-slider" min="4" max="20" value="8">
+                    <div class="player-number">
+                        <button id="decrease-btn" class="number-btn">-</button>
+                        <span id="player-number-display">8</span>
+                        <button id="increase-btn" class="number-btn">+</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 主题选择区域 -->
+            <div class="section">
+                <h2>选择主题</h2>
+                <div class="theme-tabs">
+                    <button class="tab-btn active" data-tab="popular">热门模板</button>
+                    <button class="tab-btn" data-tab="custom">自定义主题</button>
+                    <button class="tab-btn" data-tab="random">随机模式</button>
+                </div>
+                
+                <!-- 热门模板 -->
+                <div id="popular" class="theme-content active">
+                    <div class="theme-grid">
+                        <!-- 内置主题卡片 -->
+                    </div>
+                </div>
+                
+                <!-- 自定义主题 -->
+                <div id="custom" class="theme-content">
+                    <div class="custom-theme-form">
+                        <div class="input-group">
+                            <label for="civilian-word">平民词：</label>
+                            <input type="text" id="civilian-word" placeholder="请输入平民词">
+                        </div>
+                        <div class="input-group">
+                            <label for="undercover-word">卧底词：</label>
+                            <input type="text" id="undercover-word" placeholder="请输入卧底词">
+                        </div>
+                        <button id="save-custom-btn" class="btn btn-secondary">保存自定义主题</button>
+                    </div>
+                </div>
+                
+                <!-- 随机模式 -->
+                <div id="random" class="theme-content">
+                    <div class="random-theme">
+                        <p>系统将随机选择一组主题词对</p>
+                        <button id="random-theme-btn" class="btn btn-primary">生成随机主题</button>
+                        <div id="random-theme-preview" class="theme-preview"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 开始游戏按钮 -->
+            <div class="start-game-container">
+                <button id="start-game-btn" class="btn btn-primary btn-large">开始游戏</button>
+            </div>
+        </div>
+        
+        <!-- 游戏规则按钮 -->
+        <button id="game-rules-btn" class="game-rules-btn">游戏规则</button>
+        
+        <!-- 游戏规则悬浮显示区域 -->
+        <div id="game-rules-modal" class="game-rules-modal">
+            <div class="game-rules-content">
+                <div class="game-rules-header">
+                    <h3>游戏规则</h3>
+                    <button id="close-rules-btn" class="close-rules-btn">×</button>
+                </div>
+                <div class="game-rules-body">
+                    <h4>游戏目标</h4>
+                    <p>平民阵营：找出所有卧底，通过投票淘汰卧底。</p>
+                    <p>卧底阵营：隐藏身份，存活到最后。</p>
+                    
+                    <h4>游戏流程</h4>
+                    <ol>
+                        <li>选择玩家人数（4-20人）</li>
+                        <li>选择游戏主题或自定义主题词</li>
+                        <li>每位玩家查看自己的身份和词语</li>
+                        <li>依次发言，描述自己的词语</li>
+                        <li>投票淘汰可疑玩家</li>
+                        <li>若出现平票，进行二次投票</li>
+                        <li>重复发言和投票环节，直到游戏结束</li>
+                    </ol>
+                    
+                    <h4>身份分配</h4>
+                    <ul>
+                        <li>4-7人：1名卧底</li>
+                        <li>8-11人：2名卧底</li>
+                        <li>12人及以上：3名卧底</li>
+                    </ul>
+                    
+                    <h4>胜利条件</h4>
+                    <ul>
+                        <li>平民胜利：所有卧底被淘汰</li>
+                        <li>卧底胜利：当存活玩家数量≤3且有卧底存活，或卧底数量≥平民数量</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 发牌页面 -->
+    <div id="dealing-page" class="page">
+        <div class="dealing-container">
+            <div class="player-indicator">
+                <h3>玩家 <span id="current-player-number">1</span>，请查看你的身份</h3>
+                <p class="instruction">点击卡牌查看身份</p>
+            </div>
+            
+            <div id="card" class="card">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <h2>🎭 谁是卧底</h2>
+                        <p>点击查看身份</p>
+                    </div>
+                    <div class="card-back">
+                        <div class="role-info">
+                            <div class="role-icon" id="role-icon"></div>
+                            <h3 id="player-role"></h3>
+                        </div>
+                        <div class="word-display">
+                            <h1 id="player-word"></h1>
+                        </div>
+                        <div class="player-id">玩家 <span id="card-player-number"></span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dealing-controls" id="dealing-controls" style="display: none;">
+                <button id="next-player-btn" class="btn btn-primary">下一位玩家</button>
+                <button id="finish-dealing-btn" class="btn btn-secondary">完成发牌</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 投票页面 -->
+    <div id="voting-page" class="page">
+        <div class="container">
+            <h1>投票环节</h1>
+            <p class="subtitle">请选择你要投票的玩家</p>
+            
+            <div class="players-grid" id="voting-players-grid"></div>
+            
+            <div class="voting-controls">
+                <button id="confirm-vote-btn" class="btn btn-primary btn-large">确认投票</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 投票结果页面 -->
+    <div id="vote-result-page" class="page">
+        <div class="container">
+            <h1>投票结果</h1>
+            
+            <div class="vote-results" id="vote-results"></div>
+            
+            <div class="game-controls">
+                <button id="continue-game-btn" class="btn btn-primary">继续游戏</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 结果页面 -->
+    <div id="result-page" class="page">
+        <div class="container">
+            <h1 id="final-result"></h1>
+            
+            <div class="all-players" id="all-players-result"></div>
+            
+            <div class="result-controls">
+                <button id="restart-game-btn" class="btn btn-primary">重新开始</button>
+                <button id="back-to-home-btn" class="btn btn-secondary">返回首页</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 全局提示框 -->
+    <div id="notification" class="notification">
+        <div class="notification-content">
+            <div class="notification-message" id="notification-message"></div>
+            <button id="notification-close" class="notification-close">×</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
